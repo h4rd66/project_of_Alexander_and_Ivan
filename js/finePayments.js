@@ -14,7 +14,6 @@ let buttonSubmit = document.getElementById("payFine");
 //Ця зміна містить всі дані які в нас зберігаються у файлі data
 let DB = data.finesData;
 
-
 /**
 Вам необхідно реалізувати наступний функціонал.
 Зробити валідацію до всіх полів
@@ -34,5 +33,38 @@ alert "Номер не співпадає" або "Сума не співпад�
  */
 buttonSubmit.addEventListener('click',payFine);
 function payFine(){
+let fineNumberValue = fineNumber.value;
+let passportValue = passport.value;
+let creditCardNumberValue = creditCardNumber.value;
+let cvvValue = cvv.value;
+let amountValue = amount.value;
 
+let fine = DB.find(item => item.номер === fineNumberValue && item.сума === parseFloat(amountValue));
+if (!fine) {
+    alert("Номер не співпадає або сума не співпадає");
+    return;
+}
+let passportPattern = /^[А-ЩЬЮЯЇІЄҐ]{2}\d{6}$/;
+if (!passportPattern.test(passportValue)) {
+    alert("Не вірний паспортний номер");
+    return;
+}
+let creditCardPattern = /^\d{16}$/;
+if (!creditCardPattern.test(creditCardNumberValue)) {
+    alert("Не вірна кредитна картка");
+    return;
+}
+let cvvPattern = /^\d{3}$/;
+if (!cvvPattern.test(cvvValue)) {
+    alert("Не вірний CVV");
+    return;
+}
+
+let index = DB.findIndex(item => item.номер === fineNumberValue && item.сума === parseFloat(amountValue));
+if (index !== -1) {
+    DB.splice(index, 1);
+    alert("Оплата пройшла успішно. Об'єкт видалено з бази даних.");
+} else {
+    alert("Помилка при видаленні об'єкта з бази даних.");
+}
 }
